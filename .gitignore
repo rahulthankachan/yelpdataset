@@ -5,8 +5,8 @@ __pycache__/
 
 
 /reviews.json
-
-
+/.DS_Store
+.idea/
 
 # C extensions
 *.so
