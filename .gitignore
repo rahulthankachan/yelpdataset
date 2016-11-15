@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+
+/reviews.json
+
+
+
 # C extensions
 *.so
 
