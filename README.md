@@ -1,6 +1,6 @@
 # Predicting Star ratings for Yelp Reviews
 
-### Group number 5
+### Group number 6
 
 ### Team Members
 1. Aaditya Ramesh
