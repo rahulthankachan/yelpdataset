@@ -4,6 +4,7 @@ import json
 import io
 import time
 import numpy as np
+import re
 import StringIO
 from sklearn import svm
 from sklearn.metrics import precision_recall_fscore_support
@@ -14,16 +15,12 @@ from nltk.stem.porter import PorterStemmer
 from nltk.classify.scikitlearn import SklearnClassifier
 from nltk.tokenize import word_tokenize
 
-def stem_tokens(tokens, stemmer):
-    stemmed = []
-    for item in tokens:
-        stemmed.append(stemmer.stem(item))
-    return stemmed
-
 def tokenize(text):
     tokens = nltk.word_tokenize(text)
-    stems = stem_tokens(tokens, stemmer)
-    return stems
+    theStems = []
+    for item in tokens:
+        theStems.append(stemmer.stem(item))
+    return theStems
 
 def getSVMFeatures(reviewText,i1):
     reviewText = reviewText.strip()
@@ -39,7 +36,6 @@ def getSVMFeatures(reviewText,i1):
     eachFeatureSet.append(vs['pos'])
     eachFeatureSet.append(vs['neg'])
     token = word_tokenize(reviewText)
-    token = stem_tokens(token, stemmer)
 
     for word in token:
         if not re.match(r'^\w+$', word):
@@ -54,7 +50,6 @@ def getSVMFeatures(reviewText,i1):
     eachFeatureSet.append(nega)
     return eachFeatureSet
 
-print (time.clock())
 i=0
 knnX = []
 knnX2 = []
@@ -76,7 +71,7 @@ with open('negative.txt') as f:
 
 with open('yelp_academic_dataset_review.json') as f:
     for line in f:
-        if i >= 100000:
+        if i >= 20000:
             break
         a = json.loads(line)
         for word in a['text'].split():
@@ -95,10 +90,10 @@ knnX = tfidf.fit_transform(token_dict).toarray()
 for x in range(len(knnX)):
     np.append(knnX[x],FeatureSet[x])
 
-X = np.array(knnX[:75000])
-y = np.array(knnY[:75000])
-test_X = np.array(knnX[75000:])
-test_y = np.array(knnY[75000:])
+X = np.array(knnX[:15000])
+y = np.array(knnY[:15000])
+test_X = np.array(knnX[15000:])
+test_y = np.array(knnY[15000:])
 clf = svm.SVC(C=1.0, cache_size=200, class_weight='balanced',coef0=0.0, degree=3, gamma='auto', kernel='linear',max_iter=-1, probability=False, random_state=None, shrinking=True,tol=0.001, verbose=False)
 clf.fit(X,y)
 
