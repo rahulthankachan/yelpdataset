@@ -16,16 +16,12 @@ from nltk.classify.scikitlearn import SklearnClassifier
 from nltk.tokenize import word_tokenize
 from sklearn import preprocessing, neighbors
 
-def stem_tokens(tokens, stemmer):
-    stemmed = []
-    for item in tokens:
-        stemmed.append(stemmer.stem(item))
-    return stemmed
-
 def tokenize(text):
     tokens = nltk.word_tokenize(text)
-    stems = stem_tokens(tokens, stemmer)
-    return stems
+    theStems = []
+    for item in tokens:
+        theStems.append(stemmer.stem(item))
+    return theStems
 
 def getKNNFeatures(reviewText,i1):
     reviewText = reviewText.strip()
@@ -37,7 +33,6 @@ def getKNNFeatures(reviewText,i1):
     eachFeatureSet.append(vs['pos'])
     eachFeatureSet.append(vs['neg'])
     token = word_tokenize(reviewText)
-    token = stem_tokens(token, stemmer)
     # c = Counter(token)
     posi = 0
     nega = 0
@@ -59,7 +54,6 @@ def getKNNFeatures(reviewText,i1):
 
     # eachFeatureSet.append(len(reviewText))
 
-print (time.clock())
 i=0
 knnX = []
 knnX2 = []
@@ -81,7 +75,7 @@ with open('negative.txt') as f:
 
 with open('yelp_academic_dataset_review.json') as f:
     for line in f:
-        if i >= 10000:
+        if i >= 20000:
             break
         a = json.loads(line)
         for word in a['text'].split():
@@ -91,7 +85,7 @@ with open('yelp_academic_dataset_review.json') as f:
         token_dict.append(a['text'].lower())
         knnY.append(a['stars'])
         i+=1
-        print i
+        # print i
 f.close()
 
 tfidf = TfidfVectorizer(tokenizer=tokenize, lowercase=True, encoding=u'utf-8',stop_words='english',ngram_range=(1, 2), max_df=1.0, min_df=1, max_features=100, binary=False, use_idf=True, smooth_idf=True, sublinear_tf=True)
@@ -101,10 +95,10 @@ for x in range(len(knnX)):
     np.append(knnX[x],FeatureSet[x])
     # print knnX[x]
 
-X = np.array(knnX[:9000])
-y = np.array(knnY[:9000])
-test_X = np.array(knnX[9000:])
-test_y = np.array(knnY[9000:])
+X = np.array(knnX[:15000])
+y = np.array(knnY[:15000])
+test_X = np.array(knnX[15000:])
+test_y = np.array(knnY[15000:])
 clf = neighbors.KNeighborsClassifier(n_neighbors=5, weights='uniform', algorithm='auto', leaf_size=30, p=2, metric='minkowski', metric_params=None, n_jobs=1)
 clf.fit(X,y)
 
